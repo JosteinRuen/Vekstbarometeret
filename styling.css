@@ -1,0 +1,13 @@
+body{
+    background-color: #fff;
+}
+
+
+#container {
+
+    min-width: 310px;
+    height: 500px;
+    margin: 30px;
+    margin-left: 80px;
+    margin-right: 80px;
+}

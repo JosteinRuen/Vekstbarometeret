@@ -5,7 +5,7 @@ import json
 from pyjstat import pyjstat
 
 
-def kombiner_sporringer(df_1, df_2):
+def kombiner_sporringer(df_1, df_2): #Formaterer og kombinerer 2 dataframes
     print(df_1.describe)
 
     #Først rename alle ringerike(1977) til bare Ringerike etc
@@ -182,11 +182,11 @@ def main():
         }
     }
 
-    x = requests.post(url, json=sporring_77)
+    x = requests.post(url, json=sporring_77) #save response in x
     response_77 = json.loads(x.text)
 
-    dataset = pyjstat.Dataset.read(x.text)
-    df_77 = dataset.write('dataframe')
+    dataset = pyjstat.Dataset.read(x.text) # Create  dataset out of the response
+    df_77 = dataset.write('dataframe') # Create a pandas dataframe
 
     x = requests.post(url, json=sporring_20)
     response_20 = json.loads(x.text)
