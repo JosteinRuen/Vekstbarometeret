@@ -35,7 +35,8 @@ def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert
     # Først rename alle ringerike(1977) til bare Ringerike etc
     for row_label, row in df_1.iterrows():  # For alle rader i dataframen
         if "(1977-2019)" in str(row['region']):  # Hvis raden er fra -2019 dataframen...
-            df_1.loc[row_label, 'region'] = str(row['region'].replace(' (1977-2019)', ''))  # Fjern -2019 identifikatoren
+            df_1.loc[row_label, 'region'] = str(
+                row['region'].replace(' (1977-2019)', ''))  # Fjern -2019 identifikatoren
         if "(-2019)" in str(row['region']):
             df_1.loc[row_label, 'region'] = str(row['region'].replace(' (-2019)', ''))
 
@@ -52,22 +53,19 @@ def dataframe_to_linechart(df, r_list):  # Formaterer data til highchart formate
     for x in r_list:
         dict[x] = []
 
-
-
     for row_label, row in df.iterrows():
-        #print(row['år'])
+        # print(row['år'])
         for x in r_list:
             if row['region'] == x:
                 dict[row['region']] += [row['år'], row['value'], row['region']]
 
-    #df = df.pivot(index='år',columns='region')
-    #df.drop('statistikkvariabel', axis=1)
-    #df = df.pivot_table(df, values='value', index='år', columns='region')
-
+    # df = df.pivot(index='år',columns='region')
+    # df.drop('statistikkvariabel', axis=1)
+    # df = df.pivot_table(df, values='value', index='år', columns='region')
 
     resultat_string = "År "
     for x in range(0, len(r_list)):
-        if x == len(r_list) -1:
+        if x == len(r_list) - 1:
             resultat_string += str(r_list[x]) + '\n'
         else:
             resultat_string += str(r_list[x]) + ", "
@@ -76,42 +74,35 @@ def dataframe_to_linechart(df, r_list):  # Formaterer data til highchart formate
         for element in dict[key]:
             print(element)
 
-
-
-    #print(resultat_string)
+    # print(resultat_string)
     for key, value in dict.items():
-        #print("Key: " , key)
+        # print("Key: " , key)
 
         for x in dict[key]:
-            #print(x)
+            # print(x)
 
             for z in dict[key]:
-                s=1
-                #print("x: " , x, "Z; ", z)
-            for i in range(0,len(value)):
-                s=1
+                s = 1
+                # print("x: " , x, "Z; ", z)
+            for i in range(0, len(value)):
+                s = 1
 
-            #print(dict[key][0])
+            # print(dict[key][0])
             if x == value[0]:
                 s = 1
-                #resultat_string += str(value[1]) + ", "
-
-
-
+                # resultat_string += str(value[1]) + ", "
 
     print(resultat_string)
 
 
-
-
-def dataframe_til_linechart_01(df, r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
+def dataframe_til_linechart_01(df,
+                               r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
     # Denne funksjonen
     # Lag tomme lister med nettinnflytning som data, trenger flere lister ved større spørringer
     liste_1 = []
     liste_2 = []
     liste_3 = []
     liste_4 = []
-
 
     #  Leser gjennom hvor mange regioner som skal inkluderes, endrer csv fil dynamisk
     # Resultat_string bygger opp CSV filen som highcharts skal lese av
@@ -121,7 +112,6 @@ def dataframe_til_linechart_01(df, r_list):  # Formaterer data til highchart for
             resultat_string += str(r_list[x]) + '\n'
         else:
             resultat_string += str(r_list[x]) + ", "
-
 
     # Iterer over dataframe
     for row_label, row in df.iterrows():
@@ -134,7 +124,6 @@ def dataframe_til_linechart_01(df, r_list):  # Formaterer data til highchart for
             liste_3.append([row['år'], row['value'], row['region']])
         if row['region'] == r_list[3]:
             liste_4.append([row['år'], row['value'], row['region']])
-
 
     # Iterer over alle elementer i første liste
     for i in liste_1:
@@ -159,8 +148,6 @@ def dataframe_til_linechart_01(df, r_list):  # Formaterer data til highchart for
 
         resultat_string += '\n'
 
-    print(resultat_string)
-
     return resultat_string
 
 
@@ -169,7 +156,15 @@ def skriv_til_fil(filnavn, stringen):  # Skriver en gitt string til CSV, filnavn
         f.write(stringen)
 
 
+def lag_dataframes(sporring, url):  # returnerer en dataframe av en gitt spørring
+    response = requests.post(url, json=sporring)
+    dataset = pyjstat.Dataset.read(response.text)
+    df = dataset.write('dataframe')
+    return df
+
+
 def main():
+    #Spørringer og url
     url = "https://data.ssb.no/api/v0/no/table/09588/"
     sporring_netto_77 = {
         "query": [
@@ -354,36 +349,33 @@ def main():
         }
     }
 
-    x = requests.post(url, json=sporring_netto_77)  # save response in x
-    response_77 = json.loads(x.text)
+    #Lag dataframes ut av spørringene
+    df_netto_77 = lag_dataframes(sporring_netto_77, url)
+    df_netto_20 = lag_dataframes(sporring_netto_20, url)
+    df_inn_ut_77 = lag_dataframes(sporring_inn_ut_77, url)
+    df_inn_ut_20 = lag_dataframes(sporring_inn_ut_20, url)
 
-    dataset = pyjstat.Dataset.read(x.text)  # Create  dataset out of the response
-    df_netto_77 = dataset.write('dataframe')  # Create a pandas dataframe
-
-    x = requests.post(url, json=sporring_netto_20)
-    response_20 = json.loads(x.text)
-
-    dataset = pyjstat.Dataset.read(x.text)
-    df_netto_20 = dataset.write('dataframe')
-
-    x = requests.post(url, json=sporring_inn_ut_77)
-    dataset = pyjstat.Dataset.read(x.text)
-    df_inn_ut_77 = dataset.write('dataframe')
-
-    x = requests.post(url, json=sporring_inn_ut_20)
-    dataset = pyjstat.Dataset.read(x.text)
-    df_inn_ut_20 = dataset.write('dataframe')
-
+    #Kombiner og formater netto dataframene
     df_kombinert = kombiner_sporringer(df_netto_77, df_netto_20)
 
+    #Kombiner og formater inn/ut dataframene
     df_inn_ut_kombinert = kombiner_sporringer(df_inn_ut_77, df_inn_ut_20)
 
-    # print(df_inn_ut_kombinert.describe)
     print(df_kombinert.describe)
+    print(df_inn_ut_kombinert.describe)
 
+    #les dataframe og omformater til riktig highcharts format
     csv_string = dataframe_til_linechart_01(df_kombinert, ['Ringerike', 'Hole', 'Modum', 'Jevnaker'])
 
+    #Lagre nettoinnflytting resultatet i en CSV fil som leses av Highcharts
     skriv_til_fil('verdier.csv', csv_string)
+
+    #lagre Inn og utflytting data i en CSV fil som leses av Highcharts
+    df_inn_ut_kombinert.to_csv('inn_ut.csv', index=False)
+
+    print("========================================= \n")
+    print("Programmet ble utført og verdier.csv har blitt lagd")
+    print("Du kan nå åpne Highcharts_resultat.html for å se resultatet")
 
 
 main()
