@@ -19,29 +19,59 @@
 
         const options_1 = {
             chart: {
-                backgroundColor: '#242c30'
+                backgroundColor: '#1e1d1d'
             },
             title: {
                 text: 'Nettoinnflytting',
-                color: '#ffffff'
+                style: {
+                    color: '#ffffff'
+                }
             },
              subtitle: {
                  text: 'Flyttestrøm, totalt'
              },
             yAxis: {
+                labels: {
+                    style: {
+                        color: "#ffffff"
+                    }
+                },
                 title:{
-                    text: 'Nettoinnflyttning'
-                }
+                    text: 'Nettoinnflyttning',
+                    style: {
+                        color: '#ffffff'
+                    }
+                },
+
             },
             xAxis: {
+                labels: {
+                    style: {
+                        color: "#ffffff"
+                    }
+                },
                 title: {
-                    text: 'År'
+                    text: 'År',
+                    style: {
+                        color: '#ffffff'
+                    }
+
                 }
             },
             legend: {
                 layout: 'horizontal',
                 borderWidth: 1,
-                verticalAlign: 'top'
+                verticalAlign: 'top',
+
+                style: {
+                    color: '#efefef'
+                },
+                itemStyle: {
+                    color: '#ffffff'
+                },
+                itemHoverStyle: {
+                    color: '#ff0000'
+                }
             },
 
             exporting: {
@@ -54,10 +84,13 @@
             },
         }
 
+
         $.get('verdier.csv', data =>{
             options_1.data = {
                 csv: data
+
             };
+            var items = data.split(',') // Split
             Highcharts.chart('container', options_1)
         });
 

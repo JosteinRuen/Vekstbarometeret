@@ -1,10 +1,9 @@
 body{
-    background-color: aliceblue;
+    background-color: black;
 }
 
 
 #container {
-    background-color: aliceblue;
     min-width: 310px;
     height: 500px;
     margin: 30px;
