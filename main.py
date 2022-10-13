@@ -1,6 +1,5 @@
 import csv
 import os
-
 import pandas as pd
 import requests
 import json
@@ -27,10 +26,9 @@ def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert
 
 
 
-def dataframe_til_linechart_01(df,
-                               r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
-    # Denne funksjonen
-    # Lag tomme lister med nettinnflytning som data, trenger flere lister ved større spørringer
+def dataframe_til_linechart_01(df,r_list):
+    # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
+    # Lag tomme lister med nettinnflytning som data
     liste_1 = []
     liste_2 = []
     liste_3 = []
@@ -60,11 +58,11 @@ def dataframe_til_linechart_01(df,
     # Iterer over alle elementer i første liste
     for i in liste_1:
         resultat_string += i[0] + ', '  # Legger til året i csv filen
-        resultat_string += str(i[1]) + ', '  # legger til ringerike sin netto-verdi
+        resultat_string += str(i[1]) + ', '  # legger til første region sin netto-verdi
 
         # for hvert element i listen, iterer de andre listene og slå sammen til 1 CSV fil
         for x in liste_2:
-            if (x[0] == i[0]):  # Hvis ringerike-år er det samme som hole-år...
+            if (x[0] == i[0]):  # Hvis feks: ringerike-år er det samme som hole-år...
                 resultat_string += str(x[1]) + ', '  # Legg til hole nettoverdi i CSV filen
                 break
 
@@ -308,8 +306,5 @@ def main():
     print("========================================= \n")
     print("Programmet ble utført og verdier.csv har blitt lagd")
     print("Du kan nå åpne Highcharts_resultat.html for å se resultatet")
-
-    print(os.getcwd())
-
 
 main()
