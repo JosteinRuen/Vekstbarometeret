@@ -4,7 +4,7 @@ import requests
 import json
 from pyjstat import pyjstat
 
-
+"""
 def kombiner_sporringer(df_1, df_2):  # Formaterer og kombinerer 2 dataframes
     print(df_1.describe)
 
@@ -18,64 +18,155 @@ def kombiner_sporringer(df_1, df_2):  # Formaterer og kombinerer 2 dataframes
             df_1.loc[row_label, 'region'] = 'Hole'
         if row['region'] == 'Modum (-2019)':
             df_1.loc[row_label, 'region'] = 'Modum'
+        #Legg til flere regioner her etter behov
 
     dataframes = [df_1, df_2]
     sammensatt_frames = pd.concat(dataframes)  # Concat dataframes til 1 dataframe
 
-    return sammensatt_frames
+    return sammensatt_frames # Returner den samensatte dataframen som inneholder 2004-2020
+"""
 
 
-def dataframe_to_linechart(df):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
+def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert dataframe
+    # Agnostisk ovenfor region, vil sammenslå enhver tabell fra 2004 - 2020
 
-    # Lag tomme lister med nettinnflytning som data
-    ringerike_list = []
-    hole_list = []
-    modum_list = []
-    jevnaker_list = []
+    print(df_1.describe)
+
+    # Først rename alle ringerike(1977) til bare Ringerike etc
+    for row_label, row in df_1.iterrows():  # For alle rader i dataframen
+        if "(1977-2019)" in str(row['region']):  # Hvis raden er fra -2019 dataframen...
+            df_1.loc[row_label, 'region'] = str(row['region'].replace(' (1977-2019)', ''))  # Fjern -2019 identifikatoren
+        if "(-2019)" in str(row['region']):
+            df_1.loc[row_label, 'region'] = str(row['region'].replace(' (-2019)', ''))
+
+    dataframes = [df_1, df_2]
+
+    sammensatt_frames = pd.concat(dataframes)  # Concat dataframes til 1 dataframe
+
+    return sammensatt_frames  # Returner den samensatte dataframen som inneholder 2004-2020
+
+
+def dataframe_to_linechart(df, r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
+    dict = {}
+
+    for x in r_list:
+        dict[x] = []
+
+
+
+    for row_label, row in df.iterrows():
+        #print(row['år'])
+        for x in r_list:
+            if row['region'] == x:
+                dict[row['region']] += [row['år'], row['value'], row['region']]
+
+    #df = df.pivot(index='år',columns='region')
+    #df.drop('statistikkvariabel', axis=1)
+    #df = df.pivot_table(df, values='value', index='år', columns='region')
+
+
+    resultat_string = "År "
+    for x in range(0, len(r_list)):
+        if x == len(r_list) -1:
+            resultat_string += str(r_list[x]) + '\n'
+        else:
+            resultat_string += str(r_list[x]) + ", "
+
+    for key in dict.keys():
+        for element in dict[key]:
+            print(element)
+
+
+
+    #print(resultat_string)
+    for key, value in dict.items():
+        #print("Key: " , key)
+
+        for x in dict[key]:
+            #print(x)
+
+            for z in dict[key]:
+                s=1
+                #print("x: " , x, "Z; ", z)
+            for i in range(0,len(value)):
+                s=1
+
+            #print(dict[key][0])
+            if x == value[0]:
+                s = 1
+                #resultat_string += str(value[1]) + ", "
+
+
+
+
+    print(resultat_string)
+
+
+
+
+def dataframe_til_linechart_01(df, r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
+    # Denne funksjonen
+    # Lag tomme lister med nettinnflytning som data, trenger flere lister ved større spørringer
+    liste_1 = []
+    liste_2 = []
+    liste_3 = []
+    liste_4 = []
+
+
+    #  Leser gjennom hvor mange regioner som skal inkluderes, endrer csv fil dynamisk
+    # Resultat_string bygger opp CSV filen som highcharts skal lese av
+    resultat_string = "År, "
+    for x in range(0, len(r_list)):
+        if x == len(r_list) - 1:
+            resultat_string += str(r_list[x]) + '\n'
+        else:
+            resultat_string += str(r_list[x]) + ", "
+
 
     # Iterer over dataframe
     for row_label, row in df.iterrows():
-        if row['region'] == 'Ringerike':  # Hvis regionen er ringerike...
+        if row['region'] == r_list[0]:  # Hvis regionen er ringerike...
             # Legg til nettofinnflytnings verdien i listen
-            ringerike_list.append([row['år'], row['value'], row['region']])
-        if row['region'] == 'Hole':
-            hole_list.append([row['år'], row['value'], row['region']])
-        if row['region'] == 'Modum':
-            modum_list.append([row['år'], row['value'], row['region']])
-        if row['region'] == 'Jevnaker':
-            jevnaker_list.append([row['år'], row['value'], row['region']])
+            liste_1.append([row['år'], row['value'], row['region']])
+        if row['region'] == r_list[1]:
+            liste_2.append([row['år'], row['value'], row['region']])
+        if row['region'] == r_list[2]:
+            liste_3.append([row['år'], row['value'], row['region']])
+        if row['region'] == r_list[3]:
+            liste_4.append([row['år'], row['value'], row['region']])
 
-    # Resultat_string bygger opp CSV filen som highcharts skal lese av
-    resultat_string = "År, Ringerike, Hole, Modum, Jevnaker\n"
 
-    # Iterer over alle elementer i ringerike listen
-    for i in ringerike_list:
+    # Iterer over alle elementer i første liste
+    for i in liste_1:
         resultat_string += i[0] + ', '  # Legger til året i csv filen
         resultat_string += str(i[1]) + ', '  # legger til ringerike sin netto-verdi
 
         # for hvert element i listen, iterer de andre listene og slå sammen til 1 CSV fil
-        for x in hole_list:
+        for x in liste_2:
             if (x[0] == i[0]):  # Hvis ringerike-år er det samme som hole-år...
                 resultat_string += str(x[1]) + ', '  # Legg til hole nettoverdi i CSV filen
                 break
 
-        for x in modum_list:
+        for x in liste_3:
             if (x[0] == i[0]):
                 resultat_string += str(x[1]) + ', '
                 break
 
-        for x in jevnaker_list:
+        for x in liste_4:
             if (x[0] == i[0]):
                 resultat_string += str(x[1])
                 break
 
         resultat_string += '\n'
 
-    with open('verdier.csv', 'w', encoding='UTF8') as f:
-        skriver = csv.writer(f)
-        f.write(resultat_string)
+    print(resultat_string)
 
-    return df
+    return resultat_string
+
+
+def skriv_til_fil(filnavn, stringen):  # Skriver en gitt string til CSV, filnavn som parameter
+    with open(filnavn, 'w', encoding='UTF8') as f:
+        f.write(stringen)
 
 
 def main():
@@ -287,9 +378,12 @@ def main():
 
     df_inn_ut_kombinert = kombiner_sporringer(df_inn_ut_77, df_inn_ut_20)
 
-    print(df_inn_ut_kombinert.describe)
+    # print(df_inn_ut_kombinert.describe)
+    print(df_kombinert.describe)
 
-    newdf = dataframe_to_linechart(df_kombinert)
+    csv_string = dataframe_til_linechart_01(df_kombinert, ['Ringerike', 'Hole', 'Modum', 'Jevnaker'])
+
+    skriv_til_fil('verdier.csv', csv_string)
 
 
 main()
