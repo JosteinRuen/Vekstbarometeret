@@ -1,14 +1,9 @@
-import csv
-import os
 import pandas as pd
 import requests
-import json
 from pyjstat import pyjstat
 
 def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert dataframe
     # Agnostisk ovenfor region, vil sammenslå enhver tabell fra 2004 - 2020
-
-    print(df_1.describe)
 
     # Først rename alle ringerike(1977) til bare Ringerike etc
     for row_label, row in df_1.iterrows():  # For alle rader i dataframen
