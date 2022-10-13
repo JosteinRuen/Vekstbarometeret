@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from pyjstat import pyjstat
 
+
 def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert dataframe
     # Agnostisk ovenfor region, vil sammenslå enhver tabell fra 2004 - 2020
 
@@ -20,8 +21,7 @@ def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert
     return sammensatt_frames  # Returner den samensatte dataframen som inneholder 2004-2020
 
 
-
-def dataframe_til_linechart_01(df,r_list):
+def dataframe_til_linechart_01(df, r_list):
     # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
     # Lag tomme lister med nettinnflytning som data
     liste_1 = []
@@ -89,7 +89,7 @@ def lag_dataframes(sporring, url):  # returnerer en dataframe av en gitt spørri
 
 
 def main():
-    #Spørringer og url
+    # Spørringer og url
     url = "https://data.ssb.no/api/v0/no/table/09588/"
     sporring_netto_77 = {
         "query": [
@@ -274,32 +274,33 @@ def main():
         }
     }
 
-    #Lag dataframes ut av spørringene
+    # Lag dataframes ut av spørringene
     df_netto_77 = lag_dataframes(sporring_netto_77, url)
     df_netto_20 = lag_dataframes(sporring_netto_20, url)
     df_inn_ut_77 = lag_dataframes(sporring_inn_ut_77, url)
     df_inn_ut_20 = lag_dataframes(sporring_inn_ut_20, url)
 
-    #Kombiner og formater netto dataframene
+    # Kombiner og formater netto dataframene
     df_kombinert = kombiner_sporringer(df_netto_77, df_netto_20)
 
-    #Kombiner og formater inn/ut dataframene
+    # Kombiner og formater inn/ut dataframene
     df_inn_ut_kombinert = kombiner_sporringer(df_inn_ut_77, df_inn_ut_20)
 
     print(df_kombinert.describe)
     print(df_inn_ut_kombinert.describe)
 
-    #les dataframe og omformater til riktig highcharts format
+    # les dataframe og omformater til riktig highcharts format
     csv_string = dataframe_til_linechart_01(df_kombinert, ['Ringerike', 'Hole', 'Modum', 'Jevnaker'])
 
-    #Lagre nettoinnflytting resultatet i en CSV fil som leses av Highcharts
+    # Lagre nettoinnflytting resultatet i en CSV fil som leses av Highcharts
     skriv_til_fil('verdier.csv', csv_string)
 
-    #lagre Inn og utflytting data i en CSV fil som leses av Highcharts
+    # lagre Inn og utflytting data i en CSV fil som leses av Highcharts
     df_inn_ut_kombinert.to_csv('inn_ut.csv', index=False)
 
     print("========================================== \n")
     print("Programmet ble utført og verdier.csv har blitt lagd")
     print("Du kan nå åpne Highcharts_resultat.html for å se resultatet")
+
 
 main()
