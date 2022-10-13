@@ -298,7 +298,7 @@ def main():
     #lagre Inn og utflytting data i en CSV fil som leses av Highcharts
     df_inn_ut_kombinert.to_csv('inn_ut.csv', index=False)
 
-    print("========================================= \n")
+    print("========================================== \n")
     print("Programmet ble utført og verdier.csv har blitt lagd")
     print("Du kan nå åpne Highcharts_resultat.html for å se resultatet")
 
