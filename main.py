@@ -1,31 +1,10 @@
 import csv
+import os
+
 import pandas as pd
 import requests
 import json
 from pyjstat import pyjstat
-
-"""
-def kombiner_sporringer(df_1, df_2):  # Formaterer og kombinerer 2 dataframes
-    print(df_1.describe)
-
-    # Først rename alle ringerike(1977) til bare Ringerike etc
-    for row_label, row in df_1.iterrows():
-        if row['region'] == 'Ringerike (1977-2019)':
-            df_1.loc[row_label, 'region'] = 'Ringerike'
-        if row['region'] == 'Jevnaker (-2019)':
-            df_1.loc[row_label, 'region'] = 'Jevnaker'
-        if row['region'] == 'Hole (1977-2019)':
-            df_1.loc[row_label, 'region'] = 'Hole'
-        if row['region'] == 'Modum (-2019)':
-            df_1.loc[row_label, 'region'] = 'Modum'
-        #Legg til flere regioner her etter behov
-
-    dataframes = [df_1, df_2]
-    sammensatt_frames = pd.concat(dataframes)  # Concat dataframes til 1 dataframe
-
-    return sammensatt_frames # Returner den samensatte dataframen som inneholder 2004-2020
-"""
-
 
 def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert dataframe
     # Agnostisk ovenfor region, vil sammenslå enhver tabell fra 2004 - 2020
@@ -46,53 +25,6 @@ def kombiner_sporringer(df_1, df_2):  # Tar 2 dataframes, kombinerer 1 kombinert
 
     return sammensatt_frames  # Returner den samensatte dataframen som inneholder 2004-2020
 
-
-def dataframe_to_linechart(df, r_list):  # Formaterer data til highchart formatet(år, Ringerike, Hole, Modum, Jevnaker)
-    dict = {}
-
-    for x in r_list:
-        dict[x] = []
-
-    for row_label, row in df.iterrows():
-        # print(row['år'])
-        for x in r_list:
-            if row['region'] == x:
-                dict[row['region']] += [row['år'], row['value'], row['region']]
-
-    # df = df.pivot(index='år',columns='region')
-    # df.drop('statistikkvariabel', axis=1)
-    # df = df.pivot_table(df, values='value', index='år', columns='region')
-
-    resultat_string = "År "
-    for x in range(0, len(r_list)):
-        if x == len(r_list) - 1:
-            resultat_string += str(r_list[x]) + '\n'
-        else:
-            resultat_string += str(r_list[x]) + ", "
-
-    for key in dict.keys():
-        for element in dict[key]:
-            print(element)
-
-    # print(resultat_string)
-    for key, value in dict.items():
-        # print("Key: " , key)
-
-        for x in dict[key]:
-            # print(x)
-
-            for z in dict[key]:
-                s = 1
-                # print("x: " , x, "Z; ", z)
-            for i in range(0, len(value)):
-                s = 1
-
-            # print(dict[key][0])
-            if x == value[0]:
-                s = 1
-                # resultat_string += str(value[1]) + ", "
-
-    print(resultat_string)
 
 
 def dataframe_til_linechart_01(df,
@@ -376,6 +308,8 @@ def main():
     print("========================================= \n")
     print("Programmet ble utført og verdier.csv har blitt lagd")
     print("Du kan nå åpne Highcharts_resultat.html for å se resultatet")
+
+    print(os.getcwd())
 
 
 main()
